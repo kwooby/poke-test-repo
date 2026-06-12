@@ -48,11 +48,10 @@ class SearchScreen(Screen):
             # POKEMON LOOKUP FAILURE
             error_screen = self.manager.get_screen("error")
             error_screen.error_label.text = (
-                f"{self.input_box.text} not yet discovered!"
+                f"{self.input_box.text} has not been discovered yet!"
                 )
             
             self.manager.current = "error"
-
             return
 
         pokemon_screen = self.manager.get_screen("pokemon")
@@ -60,19 +59,38 @@ class SearchScreen(Screen):
         if sprite_url:
             pokemon_screen.sprite.source = sprite_url
         else:
-            pokemon_screen.sprite.source = " "            
+            pokemon_screen.sprite.source = ""
 
-        stat_text = f"Base Stats for {pokename.name.title()}: \n\n"
+        stat_text = f"Base Stats for {pokename.name.title()} \n\n"
+        bst = 0 
+        poketype = []
+
+        for t in pokename.types:
+            poketype.append(t.type.name.upper())
+
         for stat in pokename.stats:
             
-            stat_name = stat.stat.name.replace("-", "").title()
-            #bst = sum()
+            stat_name = stat.stat.name.replace("-", " ").title()
             stat_text += (
                 f"{stat_name}: "
                 f"{stat.base_stat}\n"
                 )
-            
+
+            bst += stat.base_stat 
+
+        bst_text = f"Base Stat Total: {bst}"
+        poketype_text = ""
+
+        if len(poketype) == 1:
+            poketype_text = f"Type: {poketype[0]}"
+        elif len(poketype) == 2:
+            poketype_text = f"Type: {poketype[0]} {poketype[1]}"
+        else:
+            poketype_text = f"TYPE DOES NOT EXIST?"
+
         pokemon_screen.stats.text = stat_text
+        pokemon_screen.bst.text = bst_text
+        pokemon_screen.type.text = poketype_text
 
         self.manager.current = "pokemon"
 
@@ -86,24 +104,36 @@ class PokemonScreen(Screen):
 
         self.stats = Label(
             text="PokeStats",
-            pos_hint={"center_x": 0.5, "center_y": 0.5},
-            )
+            pos_hint={"center_x": 0.4, "center_y": 0.5},
+        )
         
+        self.bst = Label(
+            text="BaseStatTotal",
+            pos_hint={"center_x": 0.6, "center_y": 0.5}
+        )
+        
+        self.type = Label(
+        text="PokeType",
+        pos_hint={"center_x":0.5, "center_y":0.7}
+        )
+
         self.sprite = AsyncImage(
             size_hint=(None,None),
-            pos_hint={"center_x": 0.5, "center_y": 0.7}
-            )
+            pos_hint={"center_x": 0.5, "center_y": 0.8}
+        )
         
         back_button = Button(
             text="Go Back",
-            size_hint=(0.4, 0.1),
-            pos_hint={"center_x": 0.5, "center_y": 0.2}
+            size_hint=(0.2, 0.1),
+            pos_hint={"center_x": 0.5, "center_y": 0.1}
         )
 
         back_button.bind(on_press=self.go_back)
         
         layout.add_widget(self.sprite)
         layout.add_widget(self.stats)
+        layout.add_widget(self.type)
+        layout.add_widget(self.bst)
 
         layout.add_widget(back_button)
 
