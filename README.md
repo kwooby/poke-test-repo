@@ -3,6 +3,23 @@
 Personal Mini Dex
 
 .
+06/16/2026
+
+Major:
+    -Added shiny sprites to pokesearch!!!!!
+    -Added Evo line text (add levels/evolution type)
+    -Added abilities to pokesearch
+
+Minor:
+    -Minor cleanup
+    -Small bug fixes
+    -Moved bst text under rest of stats
+
+Need to Add:
+    -Add level requirements/evolution requirements to evo line
+    -Add level up algorithm to scale stats by an inputted level
+
+.
 06/12/2026:
 
 Major:
@@ -10,7 +27,7 @@ Major:
     -Added bst(Base Stat Total) to pokesearch
     -Added type lookup
 
-Bugs and Other Fixes:
+Minor:
 
     -Minor bugs and fixes
     -Code cleanup
@@ -30,7 +47,7 @@ Major:
     -Added Base Stats to sprite finder
     -Added error screen for input that does not exist in pb
 
-Bug Fixes:
+Minor:
 
     -Fixed trim on ends of input to accept names w/ whitespace
     -Changed BoxLayout to FloatLayout, more dynamic

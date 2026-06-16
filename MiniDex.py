@@ -1,4 +1,3 @@
-
 # IMPORT STATEMENTS
 
 from kivy.app import App
@@ -11,6 +10,21 @@ from kivy.uix.image import AsyncImage
 
 import pokebase as pb
 
+# GET EVOLUTION LINE
+def get_evolution_line(pokemon_name):
+    species = pb.pokemon_species(pokemon_name)
+    evo_chain = species.evolution_chain.chain
+
+    evolutions = []
+
+    def traverse(chain):
+        evolutions.append(chain.species.name.title())
+        for evo in chain.evolves_to:
+            traverse(evo)
+            
+    traverse(evo_chain)
+    return evolutions
+
 # START-SEARCH SCREEN
 class SearchScreen(Screen):
     def __init__(self, **kwargs):
@@ -20,14 +34,14 @@ class SearchScreen(Screen):
 
         self.input_box = TextInput(
             hint_text="Enter Poke Name: ",
-            size_hint=(0.6, 0.5),
+            size_hint=(0.3, 0.06),
             pos_hint={"center_x":0.5,"center_y": 0.6}
         )
 
         search_button = Button(
             text="Find That Pokemon!",
             size_hint=(0.4, 0.1),
-            pos_hint = {"center_x" : 0.5 , "center_y":0.2}
+            pos_hint = {"center_x" : 0.5 , "center_y":0.46}
         )
         search_button.bind(on_press=self.search)
 
@@ -35,7 +49,7 @@ class SearchScreen(Screen):
         layout.add_widget(search_button)
 
         self.add_widget(layout)
-
+    
     def search(self, instance):
         
         try:
@@ -43,6 +57,7 @@ class SearchScreen(Screen):
                 self.input_box.text.strip().lower()
             )
             sprite_url = pokename.sprites.front_default
+            shiny_sprite_url = pokename.sprites.front_shiny
 
         except Exception:
             # POKEMON LOOKUP FAILURE
@@ -53,13 +68,18 @@ class SearchScreen(Screen):
             
             self.manager.current = "error"
             return
+        
+        evo_list = get_evolution_line(pokename.name)
+        evo_text = " - ".join(evo_list)
 
         pokemon_screen = self.manager.get_screen("pokemon")
 
-        if sprite_url:
+        if sprite_url and shiny_sprite_url:
             pokemon_screen.sprite.source = sprite_url
+            pokemon_screen.shiny_sprite.source = shiny_sprite_url
         else:
             pokemon_screen.sprite.source = ""
+            pokemon_screen.shiny_sprite.source= ""
 
         stat_text = f"Base Stats for {pokename.name.title()} \n\n"
         bst = 0 
@@ -84,13 +104,28 @@ class SearchScreen(Screen):
         if len(poketype) == 1:
             poketype_text = f"Type: {poketype[0]}"
         elif len(poketype) == 2:
-            poketype_text = f"Type: {poketype[0]} {poketype[1]}"
+            poketype_text = f"Type: {poketype[0]} / {poketype[1]}"
         else:
             poketype_text = f"TYPE DOES NOT EXIST?"
 
+        pokeAbility = []
+
+        for ability in pokename.abilities:
+            pokeAbility.append(ability.ability.name.upper())
+            abilities_text = f"Abilities:\n{pokeAbility[0]}\n"
+
+            if ability.is_hidden is True:
+                hidden_ability = ability.ability.name.upper()
+                abilities_text += f"\nHidden Abilities:\n {hidden_ability}"
+            else: 
+                pass
+        
         pokemon_screen.stats.text = stat_text
         pokemon_screen.bst.text = bst_text
         pokemon_screen.type.text = poketype_text
+        pokemon_screen.evos.text = evo_text
+        pokemon_screen.abilities.text = abilities_text
+
 
         self.manager.current = "pokemon"
 
@@ -102,6 +137,7 @@ class PokemonScreen(Screen):
         super().__init__(**kwargs)
         layout = FloatLayout()
 
+        # STAT INFO
         self.stats = Label(
             text="PokeStats",
             pos_hint={"center_x": 0.4, "center_y": 0.5},
@@ -109,17 +145,32 @@ class PokemonScreen(Screen):
         
         self.bst = Label(
             text="BaseStatTotal",
-            pos_hint={"center_x": 0.6, "center_y": 0.5}
+            pos_hint={"center_x": 0.39, "center_y": 0.35}
         )
         
         self.type = Label(
-        text="PokeType",
-        pos_hint={"center_x":0.5, "center_y":0.7}
+            text="PokeType",
+            pos_hint={"center_x":0.5, "center_y":0.7}
         )
 
+        self.evos = Label(
+            text="Pokemon Evolution Chain",
+            pos_hint={"center_x":0.5,"center_y":0.9}
+        )
+
+        self.abilities = Label(
+            text="PokeAbilities",
+            pos_hint={"center_x":0.6, "center_y":0.5}
+        )
+
+        # SPRITES
         self.sprite = AsyncImage(
             size_hint=(None,None),
-            pos_hint={"center_x": 0.5, "center_y": 0.8}
+            pos_hint={"center_x": 0.45, "center_y": 0.8}
+        )
+        self.shiny_sprite = AsyncImage(
+            size_hint=(None, None),
+            pos_hint={"center_x":0.55, "center_y":0.8}
         )
         
         back_button = Button(
@@ -131,9 +182,12 @@ class PokemonScreen(Screen):
         back_button.bind(on_press=self.go_back)
         
         layout.add_widget(self.sprite)
+        layout.add_widget(self.shiny_sprite)
         layout.add_widget(self.stats)
+        layout.add_widget(self.abilities)
         layout.add_widget(self.type)
         layout.add_widget(self.bst)
+        layout.add_widget(self.evos)
 
         layout.add_widget(back_button)
 
