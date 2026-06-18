@@ -14,6 +14,7 @@ Minor:
     -Minor cleanup
     -Small bug fixes
     -Moved bst text under rest of stats
+    -Fixed sizing on pokename input box and moved button to fit accordingly
 
 Need to Add:
     -Add level requirements/evolution requirements to evo line
