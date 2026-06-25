@@ -3,6 +3,83 @@
 Personal Mini Dex
 
 .
+06/25/2026
+
+Major:
+    -Added enter to search
+    -Cleaned abilities code block to include multiple abilities if pokemon has them
+
+Minor:
+    -Fixed multiline in search
+
+Need to Fix:
+    Major:
+
+    -Evolving through friendship currently only partially works, it returns (friendship #)
+    but does not apply to several of the eevee line:
+        -Leafeon/Glaceon: Evolve through friendhsip and specific items
+        -Umbreon/Espeon: Evolve through friendship and time of day
+        -Vaporeon/Flareon/Jolteon: Evolve through evolution stone items(does not show
+        in mini dex as of today)
+        -Sylveon: Evolves through friendship and move knowledge (this will be difficult
+         to fit in the UI lmao)
+    -pokesearch of any eeveelution (not eevee) should only result in eevee to one eevee-
+    lution, currently returns every single eevee to eeveelution
+    -When looking up Eevee in the pokesearch, the eeveelutions should fit rather than
+    stack on top of the sprites
+
+    **NIDORAN(MALE AND FEMALE) CANNOT BE SEARCHED IN THE POKESEARCH!!!
+    -We will need to add specifications for both eevee and nidoran at the least
+
+    Minor:
+
+    -Method should find the stone or item needed to evolve with an item
+    -Pokemon that evolve through trade do not have the items required if they are needed,
+    while it's not entirely necessary, it would be nice to add that
+    -Pokemon with gender specific evolutions should also be addressed
+        -On a similar note, for pokemon that evolve gender-specifically, sprites must
+        also show both genders of the pokemon given to the pokesearch
+
+.
+06/18/2026
+
+Major:
+    -Added levels/methods to evo line
+
+Minor:
+    -Bug fixes
+    -Code and UI cleanup
+
+Need to Fix:
+    -First of all, who would've known that adding the evolution methods would cause so
+    many issues holy shit lmao
+
+    **EEVEE IS ROUGH
+    -Evolving through friendship currently only partially works, it returns (friendship #)
+    but does not apply to several of the eevee line:
+        -Leafeon/Glaceon: Evolve through friendhsip and specific items
+        -Umbreon/Espeon: Evolve through friendship and time of day
+        -Vaporeon/Flareon/Jolteon: Evolve through evolution stone items(does not show
+        in mini dex as of today)
+        -Sylveon: Evolves through friendship and move knowledge (this will be difficult
+         to fit in the UI lmao)
+    -pokesearch of any eeveelution (not eevee) should only result in eevee to one eevee-
+    lution, currently returns every single eevee to eeveelution
+    -When looking up Eevee in the pokesearch, the eeveelutions should fit rather than
+    stack on top of the sprites
+
+    **NIDORAN(MALE AND FEMALE) CANNOT BE SEARCHED IN THE POKESEARCH!!!
+    -We will need to add specifications for both eevee and nidoran at the least
+
+    -Method should find the stone or item needed to evolve with an item
+    -Pokemon that evolve through trade do not have the items required if they are needed,
+    while it's not entirely necessary, it would be nice to add that
+    -Pokemon with gender specific evolutions should also be addressed
+        -On a similar note, for pokemon that evolve gender-specifically, sprites must
+        also show both genders of the pokemon given to the pokesearch
+    -Still need to add the enter to search on the search page
+
+.
 06/16/2026
 
 Major:
