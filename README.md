@@ -1,6 +1,40 @@
 # poke-test-repo
 
-Personal Mini Dex
+Personal Mini Dex Updates
+
+.
+07/11/2026
+
+Major:
+    -Added cache (I forgot oops)
+    -Begin refactoring
+        -get_pokemon() added
+        -get_evolution_text() added
+        -search() trimmed
+
+Bugs(high priority):
+    -Fix get_sprite()
+
+Bugs(low priority):
+    -Evolving through friendship currently only partially works, it returns (friendship #)
+    but does not apply to several of the eevee line:
+        -Leafeon/Glaceon: Evolve through friendhsip and specific items
+        -Umbreon/Espeon: Evolve through friendship and time of day
+        -Vaporeon/Flareon/Jolteon: Evolve through evolution stone items(does not show
+        in mini dex as of today)
+        -Sylveon: Evolves through friendship and move knowledge (this will be difficult
+         to fit in the UI lmao)
+    -pokesearch of any eeveelution (not eevee) should only result in eevee to one eevee-
+    lution, currently returns every single eevee to eeveelution
+    -When looking up Eevee in the pokesearch, the eeveelutions should fit rather than
+    stack on top of the sprites
+
+    -Nidoran male and female cannot be searched in the pokedex
+
+    -Method should find the stone or item needed to evolve with an item
+    -Pokemon that evolve through trade do not have the items required if they are needed,
+    while it's not entirely necessary, it would be nice to add that
+    -Pokemon with gender specific evolutions should also be addressed
 
 .
 06/25/2026
@@ -30,6 +64,7 @@ Need to Fix:
 
     **NIDORAN(MALE AND FEMALE) CANNOT BE SEARCHED IN THE POKESEARCH!!!
     -We will need to add specifications for both eevee and nidoran at the least
+    -Perhaps male/female button? Like a pick which gender? idk work on that
 
     Minor:
 
@@ -39,6 +74,8 @@ Need to Fix:
     -Pokemon with gender specific evolutions should also be addressed
         -On a similar note, for pokemon that evolve gender-specifically, sprites must
         also show both genders of the pokemon given to the pokesearch
+    -Add 'Searching...' screen while MiniDex is looking for pokemon
+        -User needs feedback while waiting
 
 .
 06/18/2026

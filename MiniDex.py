@@ -45,6 +45,9 @@ class SearchScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        self.pokemon_cache = {}
+        self.sprite_cache = {}
+
         layout = FloatLayout()
 
         self.input_box = TextInput(
@@ -67,26 +70,19 @@ class SearchScreen(Screen):
 
         self.add_widget(layout)
     
-    def search(self, instance):
+    def get_pokemon(self, name):
         
-        try:
-            pokename = pb.pokemon(
-                self.input_box.text.strip().lower()
-            )
-            sprite_url = pokename.sprites.front_default
-            shiny_sprite_url = pokename.sprites.front_shiny
+        if name in self.pokemon_cache:
+            return self.pokemon_cache[name]
+        
+        pokemon = pb.pokemon(name)
 
-        except Exception:
-            # POKEMON LOOKUP FAILURE
-            error_screen = self.manager.get_screen("error")
-            error_screen.error_label.text = (
-                f"{self.input_box.text} has not been discovered yet!"
-                )
-            
-            self.manager.current = "error"
-            return
-        
-        evo_list = get_evolution_line(pokename.species.name)
+        self.pokemon_cache[name] = pokemon
+
+        return pokemon
+    
+    def build_evolution_text(self, pokemon): 
+        evo_list = get_evolution_line(pokemon.species.name)
         evo_text = ""
 
         for evo in evo_list:
@@ -96,24 +92,55 @@ class SearchScreen(Screen):
                 evo_text += f"{evo["from"]} -(Lv. {evo["level"]})-> {evo["to"]}\n"
             else:
                 evo_text += f"{evo["from"]} -({evo["method"]})-> {evo["to"]}\n"
+        
+        return evo_text
+        
+    def find_sprite(self, pokemon):
+        
+        pokemon = self.get_pokemon(pokemon)
+        pokemon_screen = self.manager.get_screen("pokemon")
+        
+        sprite_url = pokemon.sprites.front_default
+        shiny_sprite_url = pokemon.sprites.front_shiny
 
+        pokemon_screen.sprite.source = sprite_url
+        pokemon_screen.shiny_sprite.source = shiny_sprite_url
+
+        return sprite_url
+
+    def search(self, instance):
+    
+        pokemon_name = self.input_box.text.strip().lower()
         pokemon_screen = self.manager.get_screen("pokemon")
 
-        if sprite_url and shiny_sprite_url:
-            pokemon_screen.sprite.source = sprite_url
-            pokemon_screen.shiny_sprite.source = shiny_sprite_url
-        else:
-            pokemon_screen.sprite.source = ""
-            pokemon_screen.shiny_sprite.source= ""
+        try:
+            pokemon = self.get_pokemon(pokemon_name)
 
-        stat_text = f"Base Stats for {pokename.name.title()} \n\n"
+        except Exception:
+                # POKEMON LOOKUP FAILURE
+                error_screen = self.manager.get_screen("error")
+                error_screen.error_label.text = (f"{self.input_box.text} has not been discovered yet!")
+                self.manager.current = "error"
+                return
+
+        #sprite_url = pokemon.sprites.front_default
+        #shiny_sprite_url = pokemon.sprites.front_shiny
+
+        #if sprite_url and shiny_sprite_url:
+        #    pokemon_screen.sprite.source = sprite_url
+        #    pokemon_screen.shiny_sprite.source = shiny_sprite_url
+        #else:
+        #    pokemon_screen.sprite.source = ""
+        #    pokemon_screen.shiny_sprite.source= ""
+
+        stat_text = f"Base Stats for {pokemon.name.title()} \n\n"
         bst = 0 
         poketype = []
 
-        for t in pokename.types:
+        for t in pokemon.types:
             poketype.append(t.type.name.upper())
 
-        for stat in pokename.stats:
+        for stat in pokemon.stats:
             
             stat_name = stat.stat.name.replace("-", " ").title()
             stat_text += (
@@ -124,13 +151,11 @@ class SearchScreen(Screen):
             bst += stat.base_stat 
 
         bst_text = f"Base Stat Total: {bst}"
-        poketype_text = ""
+        poketype_text = " / ".join(poketype)
+        normal_abilities = []
+        hidden_abilities = []
 
-        for ability in pokename.abilities:
-
-            normal_abilities = []
-            hidden_abilities = []
-
+        for ability in pokemon.abilities:
             if ability.is_hidden:
                 hidden_abilities.append(ability.ability.name.upper())
             else:
@@ -146,18 +171,16 @@ class SearchScreen(Screen):
             else:
                 pass
 
+        pokemon_screen.evos.text = self.build_evolution_text(pokemon)
         pokemon_screen.stats.text = stat_text
         pokemon_screen.bst.text = bst_text
         pokemon_screen.type.text = poketype_text
-        pokemon_screen.evos.text = evo_text
         pokemon_screen.abilities.text = abilities_text
-
 
         self.manager.current = "pokemon"
 
 
 # POKEMON SCREEN
-
 class PokemonScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -226,7 +249,6 @@ class PokemonScreen(Screen):
 
 
 # ERROR SCREEN
-
 class ErrorScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
